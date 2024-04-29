@@ -51,9 +51,14 @@ abstract public class Organization implements OrganizationInterface {
     public Set<ProjectInterface> getRunningProjects(int year) {
         Set<ProjectInterface> returnSet = new HashSet<>();
         for (ProjectInterface project : projects) {
-            if (year >= project.getStartingYear() || year <= project.getEndingYear()) {
-                returnSet.add(project);
+            if (year < project.getStartingYear()) {
+                continue;
             }
+            if (year > project.getEndingYear()) {
+                continue;
+            }
+
+            returnSet.add(project);
         }
         return returnSet;
     }
