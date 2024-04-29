@@ -3,7 +3,6 @@ package sk.stuba.fei.uim.oop.entity.people;
 import sk.stuba.fei.uim.oop.entity.organization.OrganizationInterface;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 public class Person implements PersonInterface{

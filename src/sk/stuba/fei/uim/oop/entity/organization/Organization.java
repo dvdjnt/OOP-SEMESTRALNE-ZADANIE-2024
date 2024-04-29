@@ -6,7 +6,6 @@ import sk.stuba.fei.uim.oop.utility.Constants;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 abstract public class Organization implements OrganizationInterface {
@@ -57,6 +56,7 @@ abstract public class Organization implements OrganizationInterface {
     @Override
     public Set<ProjectInterface> getRunningProjects(int year) {
         Set<ProjectInterface> returnSet = new HashSet<>();
+
         for (ProjectInterface project : projects) {
             if (year < project.getStartingYear()) {
                 continue;
@@ -81,12 +81,22 @@ abstract public class Organization implements OrganizationInterface {
 
     @Override
     public int getProjectBudget(ProjectInterface pi) {
+        if (!this.projects.contains(pi)) {
+            return 0;
+        }
+
         return projectFunding.get(pi)+pi.getTotalBudget();
     }
 
     @Override
     public int getBudgetForAllProjects() {
-        return this.totalBudget;
+        int total = 0;
+
+        for (ProjectInterface project : this.projects) {
+            total += project.getTotalBudget();
+        }
+
+        return total;
     }
 
     @Override

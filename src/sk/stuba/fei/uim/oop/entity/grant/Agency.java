@@ -1,17 +1,14 @@
 package sk.stuba.fei.uim.oop.entity.grant;
 
-import sk.stuba.fei.uim.oop.utility.Constants;
-
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 public class Agency implements AgencyInterface{
     private String name;
-    private Set<GrantInterface> grantList;
+    private Set<GrantInterface> grantSet;
 
     public Agency() {
-        this.grantList = new HashSet<>();
+        this.grantSet = new HashSet<>();
     }
 
     @Override
@@ -27,12 +24,12 @@ public class Agency implements AgencyInterface{
     @Override
     public void addGrant(GrantInterface gi, int year) {
         gi.setYear(year);
-        this.grantList.add(gi);
+        this.grantSet.add(gi);
     }
 
     @Override
     public Set<GrantInterface> getAllGrants() {
-        return grantList;
+        return grantSet;
     }
 
     @Override
@@ -40,7 +37,7 @@ public class Agency implements AgencyInterface{
 
         Set<GrantInterface> returnSet = new HashSet<>();
 
-        for (GrantInterface grant : this.grantList) {
+        for (GrantInterface grant : this.grantSet) {
             if (grant.getYear() == year) {
                 returnSet.add(grant);
             }

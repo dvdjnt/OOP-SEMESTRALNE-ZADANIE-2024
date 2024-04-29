@@ -11,11 +11,8 @@ import java.util.Set;
 
 public class Project implements ProjectInterface {
     private String name;
-    private int id; // TODO IMPORTANT!!! - hash
     private int startingYear;
     private int endingYear;
-    private int yearBudget;
-    private int duration;
     private int totalBudget;
     private Map<Integer, Integer> funding;
     private OrganizationInterface organization;
@@ -45,7 +42,9 @@ public class Project implements ProjectInterface {
     public void setStartingYear(int year) {
         this.startingYear = year;
         this.endingYear = this.startingYear + Constants.PROJECT_DURATION_IN_YEARS - 1;
-        this.duration = this.endingYear - this.startingYear + 1;  // keby getter tak pouzijem v closeGrant
+
+        // pouzitelne v closeGrant, keby existoval getter
+//        this.duration = this.endingYear - this.startingYear + 1;
     }
 
     @Override
@@ -72,11 +71,17 @@ public class Project implements ProjectInterface {
 
     @Override
     public void addParticipant(PersonInterface participant) {
+        if (this.organization == null) {
+            return;
+        }
+
         Set<PersonInterface> employees = this.organization.getEmployees();
 
-        if (employees.contains(participant)) {
-            this.participants.add(participant);
+        if (!employees.contains(participant)) {
+            return;
         }
+
+        this.participants.add(participant);
     }
 
     @Override

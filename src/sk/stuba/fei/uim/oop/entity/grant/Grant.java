@@ -19,7 +19,7 @@ public class Grant implements GrantInterface {
     private Map<PersonInterface, Integer> applicantMap;    // mapa aplikantov na vyratanie zavazku
 
     public Grant() {
-        this.registeredProjects = new HashSet<>();
+        this.registeredProjects = new LinkedHashSet<>();
         this.projectFundingBool = new HashMap<>();
         this.projectFundingMap = new HashMap<>();
         this.applicantMap = new HashMap<>();
@@ -153,26 +153,18 @@ public class Grant implements GrantInterface {
         // nacitavame projekty z grantov za poslednych PROJECT_DURATION_IN_YEARS rokov
         Set<ProjectInterface> allPreviousProjects = getAllPreviousProjectsFromAgency(this.agency, this.year, Constants.PROJECT_DURATION_IN_YEARS);
 
-        // filtracia na projekty ktore este trvaju
+        // filtracia projektov
         Set<ProjectInterface> interferingProjects = filterProjects(allPreviousProjects, this.year);
 
-        // z interfering projektov naplnime mapu aplikantov (vycerpanych zavazkov)
-        // z kazdeho projektu pozrieme vsetkych ludi, ak su vysetrovani, zistime im zavazok
+        // z interfering projektov naplnime mapu aplikantov (vycerpanych zavazkov vysetrovanych ludi)
         applicantMap = addEmploymentToMapFromProjects(interferingProjects, applicantMap);
 
-        // mame mapu vysetrovanych aplikantov kde su spravne hodnoty vycerpanych zavazkov z projektov,
-        // ktore interferuju s grantom tento rok.
-
-        // teraz ideme projekt po projekte a pozerame, ci mozu byt projekty uznane
-        // ak ano, projektu priradime TRUE
-        // neprijatym projektom zostava FALSE v mape
+        // ideme projekt po projekte a pozerame, ci mozu byt projekty uznane
         projectFundingBool = checkSolvingCapacity(projectFundingBool, applicantMap);
 
-        // v tomto bode mame vyfiltrovane projekty - zostali nam iba projekty fit for funding
-        // urcovanie fundingu projektom
+        // v tomto bode mame vyfiltrovane projekty - zostali nam iba projekty fit for funding - urcovanie fundingu projektom
         projectFundingMap = assignFunding(projectFundingBool);
 
-//        this.registeredFundedProjects = new HashSet<>(projectFundingMap.keySet());
     }
 
     @Override
@@ -211,14 +203,14 @@ public class Grant implements GrantInterface {
     }
 
     public Set<ProjectInterface> filterProjects(Set<ProjectInterface> projects, int year) {
-        // filter given projects, return only those still active and funded in given year
+        // filtrujeme projekty na aktivne a s rovnakym rokom
         Set<ProjectInterface> returnSet = new HashSet<>();
 
         for (ProjectInterface project : projects) {
-            if (project.getBudgetForYear(year) == 0) {    // not-funded projects
+            if (project.getBudgetForYear(year) == 0) {    // not-funded projekty
                 continue;
             }
-            if (project.getEndingYear() < year) {  // inactive projects
+            if (project.getEndingYear() < year) {  // inaktivne projekty
                 continue;
             }
             returnSet.add(project);
@@ -263,14 +255,13 @@ public class Grant implements GrantInterface {
         return returnMap;
     }
 
-    public Map<ProjectInterface, Integer> assignFunding(Map<ProjectInterface, Boolean> projectMap) {
+    public Map<ProjectInterface, Integer> assignFunding(Map<ProjectInterface, Boolean> projectMapBool) {
 
         Map<ProjectInterface, Integer> projectsFitForFunding = new HashMap<>();
 
-
         // working with only projects fit for funding
-        for (ProjectInterface project : projectMap.keySet()) {
-            if (projectMap.get(project)) {
+        for (ProjectInterface project : projectMapBool.keySet()) {
+            if (projectMapBool.get(project)) {
                 projectsFitForFunding.put(project, 0);
             }
         }
