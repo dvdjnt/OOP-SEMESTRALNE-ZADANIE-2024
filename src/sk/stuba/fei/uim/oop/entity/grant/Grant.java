@@ -107,6 +107,7 @@ public class Grant implements GrantInterface {
 
     @Override
     public void callForProjects() {
+        // TODO zabezpecit aby sa nedal znova otvorit
         this.state = GrantState.STARTED;
     }
 
@@ -127,14 +128,8 @@ public class Grant implements GrantInterface {
             }
         }
 
-        // OVERVIEW
-        // vysetrovanie kazdeho aplikanta v ramci velkosti zavazku v ramci beziacich grantov agentury
-        // musime pozriet granty z PROJECT_DURATION_IN_YEARS rokov, pozriet vsetky schvalene projekty, vyfiltrovat
-        // ktore este trvaju, nacitat vsetkych ludi z tohto projektu a vypocitat kolko uz cerpaju zo zavazkov
-
-
-        // nacitat projekty z grantov za poslednych PROJECT_DURATION_IN_YEARS rokov
-        Set<ProjectInterface> allPreviousProjects = getAllPreviousProjectsFromAgency(this.agency, this.year);
+        // nacitavame projekty z grantov za poslednych PROJECT_DURATION_IN_YEARS rokov
+        Set<ProjectInterface> allPreviousProjects = getAllPreviousProjectsFromAgency(this.agency, this.year, Constants.PROJECT_DURATION_IN_YEARS);
 
         // filtracia na projekty ktore este trvaju
         Set<ProjectInterface> interferingProjects = filterProjects(allPreviousProjects, this.year);
@@ -183,10 +178,11 @@ public class Grant implements GrantInterface {
         this.applicantMap = new HashMap<>();
     }
 
-    public Set<ProjectInterface> getAllPreviousProjectsFromAgency(AgencyInterface agency, int year) {
+    public Set<ProjectInterface> getAllPreviousProjectsFromAgency(AgencyInterface agency, int currentYear, int searchAmountInYears) {
 
         Set<ProjectInterface> returnSet = new HashSet<>();
-        for (int i = year-1; i > (year - Constants.PROJECT_DURATION_IN_YEARS); i--) {
+        // TODO pozriet gir commit, posunut currentYear - 1, berie to projekty current ako minule a vyluci ich to potom
+        for (int i = currentYear-1; i > (currentYear - searchAmountInYears); i--) {
             Set<GrantInterface> grants = agency.getGrantsIssuedInYear(i);
 
             for (GrantInterface grant : grants) {
