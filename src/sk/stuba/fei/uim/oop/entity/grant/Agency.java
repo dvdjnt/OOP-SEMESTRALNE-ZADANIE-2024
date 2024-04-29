@@ -3,6 +3,7 @@ package sk.stuba.fei.uim.oop.entity.grant;
 import sk.stuba.fei.uim.oop.utility.Constants;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class Agency implements AgencyInterface{

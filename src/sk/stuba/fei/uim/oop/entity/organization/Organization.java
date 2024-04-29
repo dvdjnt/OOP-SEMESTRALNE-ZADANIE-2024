@@ -6,6 +6,7 @@ import sk.stuba.fei.uim.oop.utility.Constants;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 abstract public class Organization implements OrganizationInterface {
@@ -86,7 +87,6 @@ abstract public class Organization implements OrganizationInterface {
     @Override
     abstract public void projectBudgetUpdateNotification(ProjectInterface pi, int year, int budgetForYear);
     // TODO navysit projektu yearBudget, ci totalBudget?
-
 
 
     public Organization() { // TODO prehodit navrch
