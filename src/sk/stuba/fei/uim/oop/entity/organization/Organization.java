@@ -11,10 +11,8 @@ import java.util.Set;
 abstract public class Organization implements OrganizationInterface {
 
     private String name;
-    private Set<PersonInterface> employees;
     private HashMap<PersonInterface, Integer> employment;
     private Set<ProjectInterface> projects;
-    private Set<ProjectInterface> projectsRunning;
     private int budget;
     private HashMap<ProjectInterface, Integer> projectFunding;
 
@@ -31,12 +29,12 @@ abstract public class Organization implements OrganizationInterface {
     @Override
     public void addEmployee(PersonInterface p, int employment) {
         this.employment.put(p, employment);
-        this.employees.add(p);
     }
 
     @Override
     public Set<PersonInterface> getEmployees() {
-        return employees;
+        // TODO prerobit na extrahovanie z mapy???
+        return employment.keySet();
     }
 
     @Override
@@ -100,7 +98,7 @@ abstract public class Organization implements OrganizationInterface {
 
     public Organization() {
         this.employment = new HashMap<>();
-        this.employees = new HashSet<>();
+//        this.employees = new HashSet<>();
         this.projects = new HashSet<>();
         this.projectFunding = new HashMap<>();
         this.budget = Constants.COMPANY_INIT_OWN_RESOURCES;

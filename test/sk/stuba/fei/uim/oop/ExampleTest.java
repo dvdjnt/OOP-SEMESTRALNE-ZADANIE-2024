@@ -24,7 +24,7 @@ public class ExampleTest {
     private LinkedList<ProjectInterface> projects;
     private LinkedList<PersonInterface> persons;
 
-//    @BeforeEach
+    @BeforeEach
     void setUp() {
         agencies = DataFactory.getAgencies(2);
         agencies.get(0).setName("VEGA");
