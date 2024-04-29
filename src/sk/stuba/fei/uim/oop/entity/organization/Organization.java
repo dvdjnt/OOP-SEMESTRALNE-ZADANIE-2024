@@ -75,7 +75,7 @@ abstract public class Organization implements OrganizationInterface {
 
     @Override
     public int getProjectBudget(ProjectInterface pi) {
-        return projectFunding.get(pi);  // TODO test if total or year
+        return projectFunding.get(pi)+pi.getTotalBudget();  // TODO test if total or year
     }
 
     @Override

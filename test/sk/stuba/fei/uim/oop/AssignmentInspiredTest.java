@@ -268,9 +268,9 @@ public class AssignmentInspiredTest {
         gran.evaluateProjects();
         gran.closeGrant();
         // when budgetForProject/years will sometimes give float, but we round it down to the nearest integers
-        assertEquals(164, gran.getBudgetForProject(pro1));
+        assertEquals(164, gran.getBudgetForProject(pro1));  // 164
         assertEquals(164, gran.getBudgetForProject(pro2));
-        assertEquals(5, gran.getRemainingBudget());
+        assertEquals(5, gran.getRemainingBudget()); // 5
         assertEquals(333, gran.getBudget());
     }
 

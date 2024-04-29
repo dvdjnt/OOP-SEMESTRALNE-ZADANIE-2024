@@ -14,7 +14,8 @@ public class Grant implements GrantInterface {
     private int remainingBudget;
     private GrantState state;
     private Set<ProjectInterface> registeredProjects;
-    private Map<ProjectInterface, Integer> projectFundingMap;    // mapa projektov na urcenie fundingu
+    private Map<ProjectInterface, Boolean> projectFundingBool;    // mapa projektov na urcenie fundingu
+    private Map<ProjectInterface, Integer> projectFundingMap;
     private Map<PersonInterface, Integer> applicantMap;    // mapa aplikantov na vyratanie zavazku
 
     @Override
@@ -24,7 +25,7 @@ public class Grant implements GrantInterface {
 
     @Override
     public void setIdentifier(String identifier) {
-        this.id = identifier;
+        this.id = identifier;   // TODO hash daco
     }
 
     @Override
@@ -108,6 +109,8 @@ public class Grant implements GrantInterface {
     @Override
     public void callForProjects() {
         // TODO zabezpecit aby sa nedal znova otvorit
+        //  konkretne cez if projectFundingMap.isEmpty()
+        //
         this.state = GrantState.STARTED;
     }
 
@@ -115,12 +118,12 @@ public class Grant implements GrantInterface {
     public void evaluateProjects() {
         this.state = GrantState.EVALUATING;
 
-        this.projectFundingMap = new LinkedHashMap<>();
+        this.projectFundingBool = new LinkedHashMap<>();
         this.applicantMap = new HashMap<>();
 
         // inicializacia map
         for (ProjectInterface project : this.registeredProjects) {
-            projectFundingMap.put(project, 0); // defaultne bez fundingu
+            projectFundingBool.put(project, Boolean.FALSE); // defaultne bez fundingu
             Set<PersonInterface> projectParticipants = project.getAllParticipants();
 
             for (PersonInterface participant : projectParticipants) {
@@ -144,11 +147,12 @@ public class Grant implements GrantInterface {
         // teraz ideme projekt po projekte a pozerame, ci mozu byt projekty uznane
         // ak ano, projektu priradime TRUE
         // neprijatym projektom zostava FALSE v mape
-        projectFundingMap = checkSolvingCapacity(projectFundingMap, applicantMap);
+        projectFundingBool = checkSolvingCapacity(projectFundingBool, applicantMap);
 
         // v tomto bode mame vyfiltrovane projekty - zostali nam iba projekty fit for funding
         // urcovanie fundingu projektom
-        projectFundingMap = assignFunding(projectFundingMap);
+        projectFundingMap = assignFunding(projectFundingBool);
+        // TODO return je mapa s funding values
 
 //        this.registeredFundedProjects = new HashSet<>(projectFundingMap.keySet());
     }
@@ -161,7 +165,7 @@ public class Grant implements GrantInterface {
             int duration = project.getEndingYear() - project.getStartingYear();
             int funding = projectFundingMap.get(project) / duration;
 
-//            projectFundingMap.replace(project, funding); // update map for getter // TODO getBudgetForProject = total?
+//            projectFundingMap.replace(project, funding); // update map for getter // TODO floor lebo 58.9 ako int = 58
 
             for (int i = project.getStartingYear(); i < project.getEndingYear(); i++) {
                 project.setBudgetForYear(i,funding);
@@ -174,6 +178,7 @@ public class Grant implements GrantInterface {
     public Grant() {
 //        this.state = GrantState.UNDEFINED
         this.registeredProjects = new HashSet<>();
+        this.projectFundingBool = new HashMap<>();
         this.projectFundingMap = new HashMap<>();
         this.applicantMap = new HashMap<>();
     }
@@ -181,7 +186,6 @@ public class Grant implements GrantInterface {
     public Set<ProjectInterface> getAllPreviousProjectsFromAgency(AgencyInterface agency, int currentYear, int searchAmountInYears) {
 
         Set<ProjectInterface> returnSet = new HashSet<>();
-        // TODO pozriet gir commit, posunut currentYear - 1, berie to projekty current ako minule a vyluci ich to potom
         for (int i = currentYear-1; i > (currentYear - searchAmountInYears); i--) {
             Set<GrantInterface> grants = agency.getGrantsIssuedInYear(i);
 
@@ -227,39 +231,39 @@ public class Grant implements GrantInterface {
         return returnMap;
     }
 
-    public Map<ProjectInterface, Integer> checkSolvingCapacity(Map<ProjectInterface, Integer> originalProjectMap,
+    public Map<ProjectInterface, Boolean> checkSolvingCapacity(Map<ProjectInterface, Boolean> originalProjectMap,
                                                                          Map<PersonInterface, Integer> people) {
-        // pozerame, ci mozu byt projekty uznane, ak ano, projektu priradime TRUE
-        LinkedHashMap<ProjectInterface, Integer> returnMap = new LinkedHashMap<>(originalProjectMap);
+
+        LinkedHashMap<ProjectInterface, Boolean> returnMap = new LinkedHashMap<>(originalProjectMap);
 
         for (ProjectInterface project : returnMap.keySet() ) {
             Set<PersonInterface> applicants = project.getAllParticipants();
             OrganizationInterface org = project.getApplicant();
 
             for (PersonInterface person : applicants) {
-
+                // fit for funding
                 if (people.get(person) + org.getEmploymentForEmployee(person) <= Constants.MAX_EMPLOYMENT_PER_AGENCY) {
-                    // fit for funding
-                    returnMap.replace(project, 1);  // TODO nepouzivat 1, visi to v budget a je to nepekne
+                    returnMap.replace(project, Boolean.TRUE);  // TODO nepouzivat 1, visi to v budget a je to nepekne
                 }
             }
         }
         return returnMap;
     }
 
-    public Map<ProjectInterface, Integer> assignFunding(Map<ProjectInterface, Integer> projectMapInput) {
+    public Map<ProjectInterface, Integer> assignFunding(Map<ProjectInterface, Boolean> projectMap) {
 
-        Map<ProjectInterface, Integer> projectMap = new HashMap<>(projectMapInput);
+        Map<ProjectInterface, Integer> projectsFitForFunding = new HashMap<>();
+
 
         // working with only projects fit for funding
-        int size = 0;
         for (ProjectInterface project : projectMap.keySet()) {
-            if (projectMap.get(project) != 0) {
-                size++;
+            if (projectMap.get(project)) {
+                projectsFitForFunding.put(project, 0);
             }
         }
 
         int fundedProjectsAmount;
+        int size = projectsFitForFunding.size();
 
         if (size == 1) {
             fundedProjectsAmount = 1;
@@ -270,16 +274,23 @@ public class Grant implements GrantInterface {
         int counter = 0;
         int projectFunding = this.totalBudget / fundedProjectsAmount;
 
-        for (ProjectInterface project : projectMap.keySet() ) {
-            if (projectMap.get(project) == 0) {
-                continue;
-            }
+        for (ProjectInterface project: projectsFitForFunding.keySet()) {
             if (counter < fundedProjectsAmount) {
-                // clovek moze dostat dva projekty ktore sa kapacitne vylucuju
-                projectMap.replace(project, projectFunding);
-                counter++;
+                projectsFitForFunding.replace(project, projectFunding);
             }
+            counter++;
         }
-        return projectMap;
+
+//        for (ProjectInterface project : projectsFitForFunding.keySet() ) {
+//            if (projectsFitForFunding.get(project) == 0) {
+//                continue;
+//            }
+//            if (counter < fundedProjectsAmount) {
+//                // clovek moze dostat dva projekty ktore sa kapacitne vylucuju
+//                projectsFitForFunding.replace(project, projectFunding);
+//                counter++;
+//            }
+//        }
+        return projectsFitForFunding;
     }
 }
