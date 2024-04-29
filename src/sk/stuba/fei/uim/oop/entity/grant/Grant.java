@@ -32,7 +32,7 @@ public class Grant implements GrantInterface {
 
     @Override
     public void setIdentifier(String identifier) {
-        this.id = identifier;   // TODO hash daco
+        this.id = identifier;
     }
 
     @Override
@@ -118,14 +118,23 @@ public class Grant implements GrantInterface {
 
     @Override
     public void callForProjects() {
-        // TODO zabezpecit aby sa nedal znova otvorit
-        //  konkretne cez if projectFundingMap.isEmpty()
-        //
+        if (this.state != null) {
+            // grant is in progress
+            return;
+        }
+        if (!projectFundingMap.isEmpty()) {
+            // grant is closed;
+            return;
+        }
         this.state = GrantState.STARTED;
     }
 
     @Override
     public void evaluateProjects() {
+        if (this.state != GrantState.STARTED) {
+            // grant has not started
+            return;
+        }
         this.state = GrantState.EVALUATING;
 
         this.projectFundingBool = new LinkedHashMap<>();
@@ -168,7 +177,11 @@ public class Grant implements GrantInterface {
 
     @Override
     public void closeGrant() {
-        // TODO musi prebehnut evaluacia
+        if (this.state != GrantState.EVALUATING) {
+            // grant has not evaluated projects
+            return;
+        }
+
         // notifikacia kazdeho projektu, po roku, priradenie fundingu
         for (ProjectInterface project : this.projectFundingMap.keySet()) {
             double duration = project.getEndingYear() - project.getStartingYear() + 1;
@@ -243,7 +256,7 @@ public class Grant implements GrantInterface {
             for (PersonInterface person : applicants) {
                 // fit for funding
                 if (people.get(person) + org.getEmploymentForEmployee(person) <= Constants.MAX_EMPLOYMENT_PER_AGENCY) {
-                    returnMap.replace(project, Boolean.TRUE);  // TODO nepouzivat 1, visi to v budget a je to nepekne
+                    returnMap.replace(project, Boolean.TRUE);
                 }
             }
         }

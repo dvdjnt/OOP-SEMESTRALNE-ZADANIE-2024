@@ -10,6 +10,11 @@ public class Main {
     public static void main(String[] args) {
 
         // TODO komenty
+        // TODO interfaces
+        // TODO vymazat nepotrebne premenne
 
+        Grant grant = new Grant();
+
+        grant.evaluateProjects();
     }
 }

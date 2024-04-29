@@ -26,6 +26,7 @@ public class Company extends Organization {
             this.totalBudget = 0;
         }
 
+        // iba hodnoty od company, grant funding vieme zistit z projektu
         this.projectFunding.put(pi, projectFunding.get(pi) + addedValueFromCompany);
     }
 

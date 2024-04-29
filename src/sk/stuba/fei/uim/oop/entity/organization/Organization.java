@@ -64,7 +64,6 @@ abstract public class Organization implements OrganizationInterface {
             if (year > project.getEndingYear()) {
                 continue;
             }
-            // TODO test
             returnSet.add(project);
         }
         return returnSet;
@@ -92,5 +91,5 @@ abstract public class Organization implements OrganizationInterface {
 
     @Override
     abstract public void projectBudgetUpdateNotification(ProjectInterface pi, int year, int budgetForYear);
-    // TODO navysit projektu yearBudget, ci totalBudget?
+
 }

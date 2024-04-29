@@ -10,8 +10,7 @@ public class University extends Organization {
 
     @Override
     public void projectBudgetUpdateNotification(ProjectInterface pi, int year, int budgetForYear) {
-        int projectYearlyBudget = pi.getBudgetForYear(year);
-        this.projectFunding.put(pi, projectYearlyBudget);   // no additional funding
+        this.projectFunding.put(pi, pi.getBudgetForYear(year) );   // ziaden funding od univerzity
     }
 
 

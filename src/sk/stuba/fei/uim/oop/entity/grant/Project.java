@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class Project implements ProjectInterface {
     private String name;
-    private int id; // TODO IMPORTANT!!!
+    private int id; // TODO IMPORTANT!!! - hash
     private int startingYear;
     private int endingYear;
     private int yearBudget;

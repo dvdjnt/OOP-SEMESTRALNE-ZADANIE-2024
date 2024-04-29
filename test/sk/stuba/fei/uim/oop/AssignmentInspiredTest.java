@@ -201,7 +201,7 @@ public class AssignmentInspiredTest {
         grant.callForProjects();
         assertTrue(grant.getState()==states.get(0));
         grant.closeGrant();
-//        assertTrue(grant.getState()==states.get(0));
+        assertTrue(grant.getState()==states.get(0));
         grant.evaluateProjects();
         assertTrue(grant.getState()==states.get(1));
         grant.callForProjects();
