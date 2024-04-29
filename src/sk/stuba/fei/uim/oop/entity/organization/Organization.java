@@ -13,8 +13,8 @@ abstract public class Organization implements OrganizationInterface {
     private String name;
     private HashMap<PersonInterface, Integer> employment;
     private Set<ProjectInterface> projects;
-    private int budget;
-    private HashMap<ProjectInterface, Integer> projectFunding;
+    protected int totalBudget;
+    protected HashMap<ProjectInterface, Integer> projectFunding;
 
     @Override
     public String getName() {
@@ -57,7 +57,7 @@ abstract public class Organization implements OrganizationInterface {
             if (year > project.getEndingYear()) {
                 continue;
             }
-
+            // TODO test
             returnSet.add(project);
         }
         return returnSet;
@@ -66,8 +66,7 @@ abstract public class Organization implements OrganizationInterface {
     @Override
     public void registerProjectInOrganization(ProjectInterface project) {
 
-        // Každý projekt musí obsahovať informáciu o organizácii, ktorá projekt podáva
-        if (project.getApplicant() == null) {
+        if (project.getApplicant() == null) { // TODO test
             project.setApplicant(this);
         }
 
@@ -76,36 +75,24 @@ abstract public class Organization implements OrganizationInterface {
 
     @Override
     public int getProjectBudget(ProjectInterface pi) {
-        return projectFunding.get(pi);
+        return projectFunding.get(pi);  // TODO test if total or year
     }
 
     @Override
     public int getBudgetForAllProjects() {
-        return this.budget;
+        return this.totalBudget;
     }
 
     @Override
-    public void projectBudgetUpdateNotification(ProjectInterface pi, int year, int budgetForYear) {
-        // TODO navysit projektu yearBudget, ci totalBudget?
+    abstract public void projectBudgetUpdateNotification(ProjectInterface pi, int year, int budgetForYear);
+    // TODO navysit projektu yearBudget, ci totalBudget?
 
-        int projectYearlyBudget = pi.getBudgetForYear(year);
 
-        // v tom pripade prerobit set projektov na mapu a pridat own funding
 
-        if (this.budget > projectYearlyBudget ) {
-            this.projectFunding.put(pi, projectYearlyBudget*2);
-            this.budget -= projectYearlyBudget;
-        } else {
-            this.projectFunding.put(pi, this.budget);
-            this.budget = 0;
-        }
-    }
-
-    public Organization() {
+    public Organization() { // TODO prehodit navrch
         this.employment = new HashMap<>();
-//        this.employees = new HashSet<>();
         this.projects = new HashSet<>();
         this.projectFunding = new HashMap<>();
-        this.budget = Constants.COMPANY_INIT_OWN_RESOURCES;
+        this.totalBudget = Constants.COMPANY_INIT_OWN_RESOURCES;
     }
 }
