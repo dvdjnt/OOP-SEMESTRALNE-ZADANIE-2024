@@ -186,7 +186,7 @@ public class AssignmentInspiredTest {
 
 
     @Test
-    void grantState(){
+    void grantState() {
         GrantInterface grant = new Grant();
         grant.setBudget(10);
         AgencyInterface ag = new Agency();

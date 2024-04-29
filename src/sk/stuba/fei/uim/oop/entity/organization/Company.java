@@ -4,6 +4,10 @@ import sk.stuba.fei.uim.oop.entity.grant.ProjectInterface;
 
 public class Company extends Organization {
 
+    public Company() {
+        super();
+    }
+
     @Override
     public void projectBudgetUpdateNotification(ProjectInterface pi, int year, int budgetForYear) {
         // pamatame si aj funding pre projekty ktore dostali od grantu 0 v ramci kompletnosti zaznamu
@@ -22,14 +26,10 @@ public class Company extends Organization {
             this.totalBudget = 0;
         }
 
-
-
         this.projectFunding.put(pi, projectFunding.get(pi) + addedValueFromCompany);
     }
 
-    public Company() {
-        super();
-    }
+
 
 
 }

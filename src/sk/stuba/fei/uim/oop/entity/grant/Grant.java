@@ -18,6 +18,13 @@ public class Grant implements GrantInterface {
     private Map<ProjectInterface, Integer> projectFundingMap;
     private Map<PersonInterface, Integer> applicantMap;    // mapa aplikantov na vyratanie zavazku
 
+    public Grant() {
+        this.registeredProjects = new HashSet<>();
+        this.projectFundingBool = new HashMap<>();
+        this.projectFundingMap = new HashMap<>();
+        this.applicantMap = new HashMap<>();
+    }
+
     @Override
     public String getIdentifier() {
         return this.id;
@@ -174,14 +181,6 @@ public class Grant implements GrantInterface {
         }
 
         this.state = GrantState.CLOSED;
-    }
-
-    public Grant() {
-//        this.state = GrantState.UNDEFINED
-        this.registeredProjects = new HashSet<>();
-        this.projectFundingBool = new HashMap<>();
-        this.projectFundingMap = new HashMap<>();
-        this.applicantMap = new HashMap<>();
     }
 
     public Set<ProjectInterface> getAllPreviousProjectsFromAgency(AgencyInterface agency, int currentYear, int searchAmountInYears) {

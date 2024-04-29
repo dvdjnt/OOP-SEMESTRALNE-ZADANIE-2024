@@ -11,6 +11,10 @@ public class Person implements PersonInterface{
     private String address;
     private Set<OrganizationInterface> employerList;
 
+    public Person() {
+        this.employerList = new HashSet<>();
+    }
+
     @Override
     public String getName() {
         return this.name;
@@ -41,11 +45,4 @@ public class Person implements PersonInterface{
         return this.employerList;
     }
 
-    public Person(String name) {
-        this.name = name;
-    }
-
-    public Person() {
-        this.employerList = new HashSet<>();
-    }
 }

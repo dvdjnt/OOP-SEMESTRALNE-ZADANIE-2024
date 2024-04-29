@@ -17,6 +17,13 @@ abstract public class Organization implements OrganizationInterface {
     protected int totalBudget;
     protected HashMap<ProjectInterface, Integer> projectFunding;
 
+    public Organization() {
+        this.employment = new HashMap<>();
+        this.projects = new HashSet<>();
+        this.projectFunding = new HashMap<>();
+        this.totalBudget = Constants.COMPANY_INIT_OWN_RESOURCES;
+    }
+
     @Override
     public String getName() {
         return this.name;
@@ -34,7 +41,6 @@ abstract public class Organization implements OrganizationInterface {
 
     @Override
     public Set<PersonInterface> getEmployees() {
-        // TODO prerobit na extrahovanie z mapy???
         return employment.keySet();
     }
 
@@ -67,7 +73,7 @@ abstract public class Organization implements OrganizationInterface {
     @Override
     public void registerProjectInOrganization(ProjectInterface project) {
 
-        if (project.getApplicant() == null) { // TODO test
+        if (project.getApplicant() == null) {
             project.setApplicant(this);
         }
 
@@ -76,7 +82,7 @@ abstract public class Organization implements OrganizationInterface {
 
     @Override
     public int getProjectBudget(ProjectInterface pi) {
-        return projectFunding.get(pi)+pi.getTotalBudget();  // TODO test if total or year
+        return projectFunding.get(pi)+pi.getTotalBudget();
     }
 
     @Override
@@ -87,12 +93,4 @@ abstract public class Organization implements OrganizationInterface {
     @Override
     abstract public void projectBudgetUpdateNotification(ProjectInterface pi, int year, int budgetForYear);
     // TODO navysit projektu yearBudget, ci totalBudget?
-
-
-    public Organization() { // TODO prehodit navrch
-        this.employment = new HashMap<>();
-        this.projects = new HashSet<>();
-        this.projectFunding = new HashMap<>();
-        this.totalBudget = Constants.COMPANY_INIT_OWN_RESOURCES;
-    }
 }

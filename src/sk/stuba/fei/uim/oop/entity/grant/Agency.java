@@ -8,8 +8,11 @@ import java.util.Set;
 
 public class Agency implements AgencyInterface{
     private String name;
-
     private Set<GrantInterface> grantList;
+
+    public Agency() {
+        this.grantList = new HashSet<>();
+    }
 
     @Override
     public String getName() {
@@ -44,14 +47,5 @@ public class Agency implements AgencyInterface{
         }
 
         return returnSet;
-    }
-
-    public Agency(String name) {
-        this.name = name;
-        this.grantList = new HashSet<>();
-    }
-
-    public Agency() {
-        this.grantList = new HashSet<>();
     }
 }

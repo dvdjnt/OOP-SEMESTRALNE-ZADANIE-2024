@@ -21,6 +21,11 @@ public class Project implements ProjectInterface {
     private OrganizationInterface organization;
     private Set<PersonInterface> participants;
 
+    public Project() {
+        this.participants = new HashSet<>();
+        this.funding = new HashMap<>();
+    }
+
     @Override
     public String getProjectName() {
         return this.name;
@@ -99,15 +104,5 @@ public class Project implements ProjectInterface {
         this.name = name;
         this.organization = organization;
         this.participants = new HashSet<>();
-    }
-
-    public Project(String name) {
-        this.name = name;
-        this.participants = new HashSet<>();
-    }
-
-    public Project() {
-        this.participants = new HashSet<>();
-        this.funding = new HashMap<>();
     }
 }
