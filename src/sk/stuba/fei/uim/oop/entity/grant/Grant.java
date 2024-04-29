@@ -66,7 +66,10 @@ public class Grant implements GrantInterface {
 
     @Override
     public int getBudgetForProject(ProjectInterface project) {
-        return this.projectFundingMap.get(project);
+        return project.getTotalBudget();
+
+        // budget sa nezhoduje s projectFundingMap pri floatoch - pretoze je budget definovany ako int
+//        return this.projectFundingMap.get(project); -> nemozno pouzit
     }
 
     @Override
@@ -152,7 +155,6 @@ public class Grant implements GrantInterface {
         // v tomto bode mame vyfiltrovane projekty - zostali nam iba projekty fit for funding
         // urcovanie fundingu projektom
         projectFundingMap = assignFunding(projectFundingBool);
-        // TODO return je mapa s funding values
 
 //        this.registeredFundedProjects = new HashSet<>(projectFundingMap.keySet());
     }
@@ -162,12 +164,13 @@ public class Grant implements GrantInterface {
 
         // notifikacia kazdeho projektu, po roku, priradenie fundingu
         for (ProjectInterface project : this.projectFundingMap.keySet()) {
-            int duration = project.getEndingYear() - project.getStartingYear();
-            int funding = projectFundingMap.get(project) / duration;
+            double duration = project.getEndingYear() - project.getStartingYear() + 1;
+            int funding = (int)(Math.floor(projectFundingMap.get(project) / duration));
+
 
 //            projectFundingMap.replace(project, funding); // update map for getter // TODO floor lebo 58.9 ako int = 58
 
-            for (int i = project.getStartingYear(); i < project.getEndingYear(); i++) {
+            for (int i = project.getStartingYear(); i <= project.getEndingYear(); i++) {
                 project.setBudgetForYear(i,funding);
                 this.remainingBudget -= funding;
             }

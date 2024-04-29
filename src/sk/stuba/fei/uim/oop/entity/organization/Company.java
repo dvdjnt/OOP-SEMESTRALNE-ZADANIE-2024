@@ -6,15 +6,25 @@ public class Company extends Organization {
 
     @Override
     public void projectBudgetUpdateNotification(ProjectInterface pi, int year, int budgetForYear) {
-        int projectYearlyBudget = pi.getBudgetForYear(year);
+        // pamatame si aj funding pre projekty ktore dostali od grantu 0 v ramci kompletnosti zaznamu
+        projectFunding.putIfAbsent(pi, 0);
 
-        if (this.totalBudget > projectYearlyBudget ) {
-            this.projectFunding.put(pi, projectYearlyBudget*2);
-            this.totalBudget -= projectYearlyBudget;
+        int projectYearlyBudget = pi.getBudgetForYear(year);
+        int addedValueFromCompany = 0;
+
+        if (this.totalBudget == 0) {
+            addedValueFromCompany = 0;
+        } else if (this.totalBudget > projectYearlyBudget ) {
+            addedValueFromCompany = projectYearlyBudget;
+            this.totalBudget -= addedValueFromCompany;
         } else {
-            this.projectFunding.put(pi, this.totalBudget);
+            addedValueFromCompany = this.totalBudget;
             this.totalBudget = 0;
         }
+
+
+
+        this.projectFunding.put(pi, projectFunding.get(pi) + addedValueFromCompany);
     }
 
     public Company() {

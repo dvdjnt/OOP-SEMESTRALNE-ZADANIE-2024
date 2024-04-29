@@ -40,7 +40,7 @@ public class Project implements ProjectInterface {
     public void setStartingYear(int year) {
         this.startingYear = year;
         this.endingYear = this.startingYear + Constants.PROJECT_DURATION_IN_YEARS - 1;
-        this.duration = this.endingYear - this.startingYear + 1;
+        this.duration = this.endingYear - this.startingYear + 1;  // keby getter tak pouzijem v closeGrant
     }
 
     @Override
