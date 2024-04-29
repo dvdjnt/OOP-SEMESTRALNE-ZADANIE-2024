@@ -161,20 +161,18 @@ public class Grant implements GrantInterface {
 
     @Override
     public void closeGrant() {
-
+        // TODO musi prebehnut evaluacia
         // notifikacia kazdeho projektu, po roku, priradenie fundingu
         for (ProjectInterface project : this.projectFundingMap.keySet()) {
             double duration = project.getEndingYear() - project.getStartingYear() + 1;
             int funding = (int)(Math.floor(projectFundingMap.get(project) / duration));
-
-
-//            projectFundingMap.replace(project, funding); // update map for getter // TODO floor lebo 58.9 ako int = 58
 
             for (int i = project.getStartingYear(); i <= project.getEndingYear(); i++) {
                 project.setBudgetForYear(i,funding);
                 this.remainingBudget -= funding;
             }
         }
+
         this.state = GrantState.CLOSED;
     }
 
@@ -205,10 +203,10 @@ public class Grant implements GrantInterface {
         Set<ProjectInterface> returnSet = new HashSet<>();
 
         for (ProjectInterface project : projects) {
-            if (project.getBudgetForYear(year) == 0) {    // funded projects
+            if (project.getBudgetForYear(year) == 0) {    // not-funded projects
                 continue;
             }
-            if (project.getEndingYear() >= year) {  // still running
+            if (project.getEndingYear() < year) {  // inactive projects
                 continue;
             }
             returnSet.add(project);
@@ -268,6 +266,7 @@ public class Grant implements GrantInterface {
         int fundedProjectsAmount;
         int size = projectsFitForFunding.size();
 
+
         if (size == 1) {
             fundedProjectsAmount = 1;
         } else {
@@ -275,7 +274,11 @@ public class Grant implements GrantInterface {
         }
 
         int counter = 0;
-        int projectFunding = this.totalBudget / fundedProjectsAmount;
+        int projectFunding = 0;
+
+        if (size != 0) {
+            projectFunding = this.totalBudget / fundedProjectsAmount;
+        }
 
         for (ProjectInterface project: projectsFitForFunding.keySet()) {
             if (counter < fundedProjectsAmount) {
@@ -284,16 +287,6 @@ public class Grant implements GrantInterface {
             counter++;
         }
 
-//        for (ProjectInterface project : projectsFitForFunding.keySet() ) {
-//            if (projectsFitForFunding.get(project) == 0) {
-//                continue;
-//            }
-//            if (counter < fundedProjectsAmount) {
-//                // clovek moze dostat dva projekty ktore sa kapacitne vylucuju
-//                projectsFitForFunding.replace(project, projectFunding);
-//                counter++;
-//            }
-//        }
         return projectsFitForFunding;
     }
 }
